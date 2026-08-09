@@ -300,6 +300,11 @@ html, body {
   scrollbar-width: none;
 }
 
+.content > *,
+.content-body > * {
+  flex-shrink: 0;
+}
+
 .content-body::-webkit-scrollbar {
   display: none;
 }
