@@ -242,7 +242,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   padding-top: 52px;
 }
 
@@ -273,8 +273,8 @@ html, body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-height: calc(100vh - 52px);
-  max-height: calc(100dvh - 52px);
+  margin: auto 0;
+  max-height: 100%;
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -290,9 +290,9 @@ html, body {
   width: 100%;
   max-width: 460px;
   padding: 14px 14px 24px;
+  margin: auto 0;
+  max-height: 100%;
   overflow-y: auto;
-  max-height: calc(100vh - 52px);
-  max-height: calc(100dvh - 52px);
   display: flex;
   flex-direction: column;
   align-items: center;
