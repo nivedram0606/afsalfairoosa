@@ -282,8 +282,8 @@ html, body {
 
 .hero-card {
   background: rgba(253, 249, 243, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* backdrop-filter: blur(5px); */
+  /* -webkit-backdrop-filter: blur(12px); */
   border-radius: 12px;
   padding: 40px 30px;
   text-align: center;
