@@ -390,7 +390,7 @@ function executeMusicStop() {
   const text = document.getElementById('musicText');
 
   if (btn) btn.classList.remove('playing');
-  if (text) text.textContent = 'Mute';
+  if (text) text.textContent = 'Play';
 }
 
 function toggleGhibliMusic() {
