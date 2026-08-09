@@ -410,9 +410,8 @@ function initCountdown() {
   const daysEl = document.getElementById('cdDays');
   const hoursEl = document.getElementById('cdHours');
   const minsEl = document.getElementById('cdMins');
-  const secsEl = document.getElementById('cdSecs');
 
-  if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
+  if (!daysEl || !hoursEl || !minsEl) return;
 
   function updateTimer() {
     const now = new Date().getTime();
@@ -422,19 +421,16 @@ function initCountdown() {
       daysEl.textContent = '00';
       hoursEl.textContent = '00';
       minsEl.textContent = '00';
-      secsEl.textContent = '00';
       return;
     }
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     daysEl.textContent = String(days).padStart(2, '0');
     hoursEl.textContent = String(hours).padStart(2, '0');
     minsEl.textContent = String(minutes).padStart(2, '0');
-    secsEl.textContent = String(seconds).padStart(2, '0');
   }
 
   updateTimer();
@@ -501,4 +497,155 @@ if (cardModal) {
   cardModal.addEventListener('click', (e) => {
     if (e.target === cardModal) closeWeddingCard();
   });
+}
+
+/* ==========================================================================
+   8. RSVP Modal Controls
+   ========================================================================== */
+function openRsvpModal() {
+  const modal = document.getElementById('rsvpModal');
+  if (modal) {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeRsvpModal() {
+  const modal = document.getElementById('rsvpModal');
+  if (modal) {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+}
+
+function toggleGuestSelect() {
+  const guestGroup = document.getElementById('guestsGroup');
+  const attendingYes = document.querySelector('input[name="attending"][value="yes"]');
+  
+  if (attendingYes && guestGroup) {
+    if (attendingYes.checked) {
+      guestGroup.style.display = 'flex';
+    } else {
+      guestGroup.style.display = 'none';
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize EmailJS
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init("whX5boUt_LLwhjM_8");
+  }
+
+  // RSVP Form Submission Handler
+  const rsvpForm = document.getElementById('rsvpForm');
+  if (rsvpForm) {
+    rsvpForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const submitBtn = rsvpForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = 'Sending...';
+      submitBtn.disabled = true;
+
+      const formData = new FormData(rsvpForm);
+      const name = formData.get('fullName');
+      const attending = formData.get('attending');
+      
+      // Prepare the parameters to send to EmailJS
+      const templateParams = {
+        to_name: 'Afsal & Fairoosa',
+        from_name: name,
+        phone: formData.get('phone') || 'Not provided',
+        attending: attending === 'yes' ? 'Joyfully Accept' : 'Regretfully Decline',
+        guests: attending === 'yes' ? formData.get('guests') : '0',
+        message: formData.get('message') || 'No message provided'
+      };
+
+      // EmailJS Service ID
+      const SERVICE_ID = "service_s920cha";
+      const TEMPLATE_ID = "template_j4bobwn";
+
+      if (typeof emailjs !== 'undefined' && SERVICE_ID !== "YOUR_SERVICE_ID") {
+        emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+          .then((response) => {
+            console.log('SUCCESS!', response.status, response.text);
+            showSuccessAlert(name, attending);
+          }, (err) => {
+            console.log('FAILED...', err);
+            alert('Oops! Something went wrong while sending your RSVP. Please try again later.');
+          })
+          .finally(() => {
+            resetForm();
+          });
+      } else {
+        // Fallback for testing before you enter your keys
+        console.warn("EmailJS keys not configured. Simulating success.");
+        setTimeout(() => {
+          showSuccessAlert(name, attending);
+          resetForm();
+        }, 1000);
+      }
+
+      function showSuccessAlert(guestName, isAttending) {
+        let alertMessage = `Thank you, ${guestName}! Your RSVP has been confirmed.`;
+        if (isAttending === 'no') {
+          alertMessage = `Thank you, ${guestName}. We'll miss you at the wedding!`;
+        }
+        alert(alertMessage);
+      }
+
+      function resetForm() {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        rsvpForm.reset();
+        toggleGuestSelect(); // Reset guest select visibility
+        closeRsvpModal();
+      }
+    });
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeWeddingCard();
+    closeRsvpModal();
+    // Close any open info modals
+    document.querySelectorAll('.info-modal.open').forEach(modal => {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+    });
+    if (!document.querySelector('.rsvp-modal.open')) {
+      document.body.style.overflow = '';
+    }
+  }
+});
+
+/* ==========================================================================
+   9. Info Modals (Privacy, Contact, Registry)
+   ========================================================================== */
+function openInfoModal(modalId, event) {
+  if (event) {
+    event.preventDefault();
+  }
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeInfoModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    // Only restore scroll if no other modals are open
+    if (!document.querySelector('.rsvp-modal.open')) {
+      document.body.style.overflow = '';
+    }
+  }
 }
