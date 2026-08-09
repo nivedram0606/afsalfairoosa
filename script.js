@@ -14,6 +14,7 @@ let lanternCount = 0;
 let ytPlayer = null;
 let isMusicPlaying = false;
 let autoplayAttempted = false;
+let playOnReady = false;
 
 // Load YouTube IFrame API
 let tag = document.createElement('script');
@@ -46,7 +47,9 @@ function onYouTubeIframeAPIReady() {
 }
 
 function onPlayerReady(event) {
-  initAutoplayAudio();
+  if (playOnReady) {
+    startGhibliMusic();
+  }
 }
 
 function onPlayerStateChange(event) {
@@ -58,12 +61,32 @@ function onPlayerStateChange(event) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupEntranceCover();
   initGhibliCanvas();
   initCountdown();
   initRevealOnScroll();
   setupPointerEvents();
-  // Autoplay initialized in onPlayerReady
 });
+
+function setupEntranceCover() {
+  const getInBtn = document.getElementById('getInBtn');
+  const entranceCover = document.getElementById('entranceCover');
+
+  if (getInBtn && entranceCover) {
+    getInBtn.addEventListener('click', () => {
+      entranceCover.classList.add('fade-out');
+      setTimeout(() => {
+        entranceCover.style.display = 'none';
+      }, 800);
+
+      if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+        startGhibliMusic();
+      } else {
+        playOnReady = true;
+      }
+    });
+  }
+}
 
 /* ==========================================================================
    1. Ghibli Canvas Particle System (Lanterns, Stars, Petals, Sparkles)
@@ -328,35 +351,8 @@ function triggerSparkleExplosion(e) {
 }
 
 /* ==========================================================================
-   3. YouTube Background Music (with Autoplay fallback)
+   3. YouTube Background Music
    ========================================================================== */
-function initAutoplayAudio() {
-  const autoPlayHandler = () => {
-    if (!isMusicPlaying && !autoplayAttempted) {
-      startGhibliMusic();
-    }
-    removeAutoplayListeners();
-  };
-
-  const removeAutoplayListeners = () => {
-    window.removeEventListener('click', autoPlayHandler);
-    window.removeEventListener('touchstart', autoPlayHandler);
-    window.removeEventListener('scroll', autoPlayHandler);
-    window.removeEventListener('mousemove', autoPlayHandler);
-    window.removeEventListener('keydown', autoPlayHandler);
-  };
-
-  // Try immediate playback
-  startGhibliMusic();
-
-  // Fallback on first user interaction if browser blocks un-muted autoplay
-  window.addEventListener('click', autoPlayHandler);
-  window.addEventListener('touchstart', autoPlayHandler);
-  window.addEventListener('scroll', autoPlayHandler);
-  window.addEventListener('mousemove', autoPlayHandler);
-  window.addEventListener('keydown', autoPlayHandler);
-}
-
 function startGhibliMusic() {
   if (isMusicPlaying) return;
 

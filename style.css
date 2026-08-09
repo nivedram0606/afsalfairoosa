@@ -1214,3 +1214,70 @@ footer.made .made-name {
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
   }
 }
+
+/* ---------- Entrance Cover ---------- */
+.entrance-cover {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--ghibli-sky-top);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.entrance-cover.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.entrance-content {
+  text-align: center;
+  color: var(--gold-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.entrance-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
+.entrance-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
+.get-in-btn {
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color: var(--emerald-deep);
+  border: none;
+  border-radius: 30px;
+  padding: 12px 32px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(13, 59, 46, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.get-in-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(212, 175, 55, 0.5);
+}
+
+.get-in-btn:active {
+  transform: scale(0.96);
+}
