@@ -1025,8 +1025,7 @@ footer.made .made-name {
   max-width: 460px;
   max-height: 90vh;
   overflow-y: auto;
-  display: flex;
-  justify-content: center;
+  margin: 0 auto;
   padding: 12px;
   -ms-overflow-style: none;
   scrollbar-width: none;
